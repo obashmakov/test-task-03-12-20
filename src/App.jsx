@@ -1,24 +1,29 @@
-import React from 'react';
+import React, { useState } from 'react';
+import { Header } from './components/Header';
+import { Photos } from './components/Photos';
+import { Modal } from './components/Modal';
+import { Footer } from './components/Footer';
 import './App.scss';
-import { Switch, Link, Route } from 'react-router-dom';
 
-export const App = () => (
-  <div>
-    React starter pack
-    <div>
-      <nav className="nav">
-        <Link to="/">Home</Link>
-        <Link to="/users">Users</Link>
-      </nav>
+export const App = () => {
+  const [isModalActive, setIsModalActive] = useState(false);
+  const [imgId, setImgId] = useState(null);
 
-      <Switch>
-        <Route path="/users">
-          <div>Users page</div>
-        </Route>
-        <Route path="/">
-          <div>Home page</div>
-        </Route>
-      </Switch>
+  return (
+    <div className="content">
+      <div className="content__container">
+        <Header />
+        <Photos
+          setIsModalActive={setIsModalActive}
+          setImgId={setImgId}
+        />
+        <Modal
+          isModalActive={isModalActive}
+          imgId={imgId}
+          setIsModalActive={setIsModalActive}
+        />
+        <Footer />
+      </div>
     </div>
-  </div>
-);
+  );
+};

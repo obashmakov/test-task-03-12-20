@@ -1,0 +1,19 @@
+.footer {
+  height: 56px;
+  margin: 377px 20px 0 20px;
+
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  font-size: 14px;
+  color: #cccccc;
+
+  border-top: 2px solid #cccccc;
+}
+
+@media (max-width: 740px) {
+  .footer {
+    margin-top: 118px;
+  }
+}
