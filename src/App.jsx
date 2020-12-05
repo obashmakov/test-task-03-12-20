@@ -7,7 +7,7 @@ import './App.scss';
 
 export const App = () => {
   const [isModalActive, setIsModalActive] = useState(false);
-  const [imgId, setImgId] = useState(null);
+  const [imgId, setImgId] = useState(0);
 
   return (
     <div className="content">
