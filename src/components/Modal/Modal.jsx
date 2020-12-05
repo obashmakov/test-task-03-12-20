@@ -1,19 +1,39 @@
 /* eslint-disable no-console */
 import React, { useEffect, useState } from 'react';
 import PropTypes from 'prop-types';
-import './Modal.scss';
 import { getBigPhoto } from '../../api/photos';
-import { getComments, updateComments } from '../../api/comments';
+import { getComments, addComment } from '../../api/comments';
+import './Modal.scss';
 
 export const Modal = ({ isModalActive, setIsModalActive, imgId }) => {
   const [bigPhoto, setBigPhoto] = useState('');
   const [comments, setComments] = useState([]);
   const [userName, setUserName] = useState('');
   const [newComment, setNewComment] = useState('');
+  const [errorName, setErrorName] = useState(false);
+  const [errorComment, setErrorComment] = useState(false);
+
+  const updateComments = async() => {
+    const postComments = await getComments(imgId);
+
+    if (postComments.detail) {
+      setComments([]);
+    } else {
+      setComments(postComments);
+    }
+  };
 
   useEffect(() => {
     if (!imgId) {
       return;
+    }
+
+    if (isModalActive) {
+      document.body.style.overflow = 'hidden';
+    }
+
+    if (!isModalActive) {
+      document.body.style.overflow = 'visible';
     }
 
     getBigPhoto(imgId)
@@ -21,11 +41,8 @@ export const Modal = ({ isModalActive, setIsModalActive, imgId }) => {
         setBigPhoto(photo);
       });
 
-    getComments(imgId)
-      .then((comment) => {
-        setComments(comment);
-      });
-  }, [imgId, setBigPhoto]);
+    updateComments();
+  }, [isModalActive, imgId, setBigPhoto]);
 
   const handleChange = (event) => {
     const { name, value } = event.target;
@@ -40,14 +57,22 @@ export const Modal = ({ isModalActive, setIsModalActive, imgId }) => {
   const handleSubmit = (event) => {
     event.preventDefault();
 
-    updateComments(userName, newComment, imgId);
-    setComments([...comments, {
-      name: userName,
-      description: newComment,
-      image_id: imgId,
-    }]);
-    setUserName('');
-    setNewComment('');
+    if (!userName) {
+      setErrorName(true);
+    }
+
+    if (!newComment) {
+      setErrorComment(true);
+    }
+
+    if (userName && newComment) {
+      addComment(userName, newComment, imgId);
+      updateComments();
+      setUserName('');
+      setNewComment('');
+      setErrorName(false);
+      setErrorComment(false);
+    }
   };
 
   const handleClose = () => {
@@ -66,7 +91,7 @@ export const Modal = ({ isModalActive, setIsModalActive, imgId }) => {
                 alt="nature"
               />
               <form className="modal__form" onSubmit={handleSubmit}>
-                <label htmlFor="name">
+                <label htmlFor="name" className="modal__label">
                   <input
                     className="modal__input"
                     type="text"
@@ -76,8 +101,11 @@ export const Modal = ({ isModalActive, setIsModalActive, imgId }) => {
                     placeholder="Ваше имя"
                     onChange={handleChange}
                   />
+                  {errorName && (
+                    <p className="modal__error">Empty field</p>
+                  )}
                 </label>
-                <label htmlFor="comment">
+                <label htmlFor="comment" className="modal__label">
                   <input
                     className="modal__input"
                     type="text"
@@ -87,6 +115,9 @@ export const Modal = ({ isModalActive, setIsModalActive, imgId }) => {
                     placeholder="Ваш комметарий"
                     onChange={handleChange}
                   />
+                  {errorComment && (
+                    <p className="modal__error">Empty field</p>
+                  )}
                 </label>
                 <button className="modal__button" type="submit">
                   Оставить комментарий

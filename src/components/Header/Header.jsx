@@ -4,7 +4,7 @@ import './Header.scss';
 export const Header = () => (
   <header className="header">
     <h1 className="header__title">
-      Test App
+      Photos App
     </h1>
   </header>
 );

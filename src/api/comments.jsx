@@ -7,7 +7,7 @@ export const getComments = async(id) => {
   return comments;
 };
 
-export const updateComments = async(name, description, image_id) => post(
+export const addComment = async(name, description, image_id) => post(
   '/comments/add/', {
     name,
     description,
